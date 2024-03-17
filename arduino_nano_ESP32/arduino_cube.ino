@@ -5,12 +5,14 @@
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
+#include <WiFi.h>
 
 // See the following for generating UUIDs:
 // https://www.uuidgenerator.net/
 
 #define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
 #define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+// Arduino MAC adress: 34:85:18:7B:F6:41
 
 
 class MyCallbacks: public BLECharacteristicCallbacks {
@@ -34,12 +36,19 @@ class MyCallbacks: public BLECharacteristicCallbacks {
     }
 };
 
-void openBluetoothPort(){
+class MyServerCallbacks: public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) {
+      Serial.println("Device connected");
+    }
 
-  // Serial.println("1- Download and install an BLE scanner app in your phone");
-  // Serial.println("2- Scan for BLE devices in the app");
-  // Serial.println("3- Connect to CubliArduino");
-  // Serial.println("4- Go to CUSTOM CHARACTERISTIC in CUSTOM SERVICE and write something");
+    void onDisconnect(BLEServer* pServer) {
+      Serial.println("Device disconnected");
+      // Restart advertising after disconnection so connection can be established again
+      BLEDevice::startAdvertising(); 
+    }
+};
+
+void openBluetoothPort(){
 
   BLEDevice::init("CubliArduino");
   BLEServer *pServer = BLEDevice::createServer();
@@ -54,8 +63,8 @@ void openBluetoothPort(){
                                        );
 
   pCharacteristic->setCallbacks(new MyCallbacks());
+  pServer->setCallbacks(new MyServerCallbacks());
 
-  pCharacteristic->setValue("Hello World");
   pService->start();
 
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
@@ -65,7 +74,7 @@ void openBluetoothPort(){
 void setup() {
   Serial.begin(115200);
   openBluetoothPort();
-  EEPROM.begin(EEPROM_SIZE); //Maybe for ESP32
+  EEPROM.begin(EEPROM_SIZE); 
 
   pinMode(DIR_1, OUTPUT);
   pinMode(DIR_2, OUTPUT);
