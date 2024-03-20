@@ -82,7 +82,7 @@ float Acc_angleX, Acc_angleY;
 int32_t motor_speed_pwmX; 
 int32_t motor_speed_pwmY;   
 
-int  bat_divider = 283;
+int  bat_divider = 288;
 
 long currentT, previousT_1, previousT_2 = 0;
 

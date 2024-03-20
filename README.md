@@ -3,6 +3,10 @@
 This Repository contains the files needed for running the PID-Controller code on the Arduino Nano ESP32 and tuning it using Bluetooth Low Energy.
 For build description refer to the parent repository of RemRC. Use the circuit diagram for the Arduino Nano.
 
+
+> [!IMPORTANT]
+> Instead of soldering the IMU-VCC and the Buzzer to the 5V pin (not existing in the Arduino Nano ESP32, instead it uses a VBUS pin only delivering voltage when plugged in via USB), use the 3.3V pin of the Arduino ESP32 instead!
+
 ## Flashing the ESP32
 * Open the Arduino IDE or IOPlatform.
 * Select the Arduino Nano ESP32 board from Arduino itself.
